@@ -5,18 +5,14 @@ import { FiShoppingBag } from "react-icons/fi";
 import { BsFillPencilFill } from "react-icons/bs";
 import { login, logout, onUserStateChange } from "../api/firebase";
 import User from "./User";
+import { useAuthContext } from "../context/AuthContext";
 
 const Header = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    onUserStateChange((user) => setUser(user));
-  }, []);
+  const { user, login, logout } = useAuthContext();
 
   const handleLogin = () => {
     login();
   };
-
   const handleLogout = () => {
     logout();
   };
@@ -29,14 +25,14 @@ const Header = () => {
       </Link>
       <StyledNav>
         <Link to="/products">Products</Link>
-        <Link to="/cart">cart</Link>
+        {user && <Link to="/cart">cart</Link>}
         {user?.isAdmin && (
           <Link to="/products/new">
             <BsFillPencilFill />
           </Link>
         )}
       </StyledNav>
-      {user && user.isAdmin && <User user={user} />}
+      {user && <User user={user} />}
       {!user ? (
         <StyledLoginButton type="button" onClick={handleLogin}>
           로그인
